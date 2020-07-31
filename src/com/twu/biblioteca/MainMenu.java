@@ -1,9 +1,8 @@
 package com.twu.biblioteca;
 
-import com.twu.biblioteca.BookRepository;
-import com.twu.biblioteca.Book;
+import com.twu.biblioteca.book.Book;
+import com.twu.biblioteca.book.BookRepository;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 import java.util.stream.IntStream;
@@ -57,36 +56,19 @@ public class MainMenu {
                         displayBooks();
                         break;
                 }
-
-
-
-
-
             }
-
-
-
-
-
-
-
-
-
         }
     }
 
 
     public void displayBooks(){
-        //System.out.printf("5s%-5s%-5s%-5s%-5s%n", "** Title **", "** Author **", "** ISBN **", "** Year **");
+        System.out.printf("%-30s%-2s%-30s%-2s%-15s%-2s%-6s%n", "** Title **","|", "** Author **","|", "** ISBN **", "|","** Year **");
         for (Book book: bookRepository.getAvailableBooks()){
-            System.out.printf("%-2s%-2s%-2s%-2s%-2s%-2s%-2s%n", book.getTitle(), "|",
+            System.out.printf("%-30s%-2s%-30s%-2s%-15s%-2s%-6s%n", book.getTitle(), "|",
                     book.getAuthor(), "|", book.getIsbn(), "|", book.getYear());
-
         }
-        System.out.printf("------------------\n");
+        System.out.printf("------------------------------------------------------\n");
     }
-
-
 }
 
 
