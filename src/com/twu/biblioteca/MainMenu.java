@@ -2,6 +2,8 @@ package com.twu.biblioteca;
 
 import com.twu.biblioteca.BookRepository;
 import com.twu.biblioteca.Book;
+
+import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 import java.util.stream.IntStream;
@@ -9,10 +11,11 @@ import java.util.stream.IntStream;
 
 public class MainMenu {
     private List<String> options;
+    private BookRepository bookRepository;
 
-
-    public MainMenu(List<String> options){
+    public MainMenu(List<String> options,BookRepository bookRepository){
         this.options = options;
+        this.bookRepository=bookRepository;
     }
 
     public void PrintAllMenuList(){
@@ -47,27 +50,43 @@ public class MainMenu {
             //2、可以获得空白。
             String InputOption = scanner.nextLine();
             //只有当选项有效的时候才进行
-            if (CheckInputIsValid(InputOption)){
-                String optionChoice = options.get(Integer.valueOf(InputOption)-1); //index 比123小1
-                https://www.liaoxuefeng.com/wiki/1252599548343744/1259541030848864
+            if(CheckInputIsValid(InputOption)){
+                String optionChoice = options.get(Integer.valueOf(InputOption)-1); //index 比本身小1
                 switch (optionChoice){
-                    case "List of book":
+                    case "List of books":
                         displayBooks();
                         break;
-
                 }
+
+
+
+
+
             }
+
+
+
+
+
+
+
+
+
         }
     }
 
-    private BookRepository bookRepository;
+
     public void displayBooks(){
-        System.out.printf("%-30s%-30s%-30s%-30s%n", "** Title **", "** Author **", "** Year **", "** ISBN **");
+        //System.out.printf("5s%-5s%-5s%-5s%-5s%n", "** Title **", "** Author **", "** ISBN **", "** Year **");
         for (Book book: bookRepository.getAvailableBooks()){
-            System.out.printf("%-20s%-10s%-20s%-10s%-20s%-10s%-20s%-10s%n", book.getTitle(), "|",
-                    book.getAuthor(), "|", book.getYear(), "|", book.getIsbn(), "|");
+            System.out.printf("%-2s%-2s%-2s%-2s%-2s%-2s%-2s%n", book.getTitle(), "|",
+                    book.getAuthor(), "|", book.getIsbn(), "|", book.getYear());
+
         }
+        System.out.printf("------------------\n");
     }
+
+
 }
 
 
