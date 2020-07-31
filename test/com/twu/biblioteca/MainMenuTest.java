@@ -2,6 +2,7 @@ package com.twu.biblioteca;
 
 import org.junit.Before;
 import org.junit.Test;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
@@ -19,6 +20,7 @@ public class MainMenuTest {
     private List<String> options;
     private MainMenu mainMenu;
     private ByteArrayOutputStream MainMenuOutput;
+    private String InvalidOption = "Please select a valid option";
     private String option1="List of books";
 
     @Before
@@ -41,6 +43,17 @@ public class MainMenuTest {
         mainMenu = new MainMenu(options);
         mainMenu.PrintAllMenuList();
         assertEquals("1- " + option1 + "\n", MainMenuOutput.toString());
+    }
+
+    @Test
+    //此时只有一个option
+    public void GetNotifiedWhenChoseInvalidOption(){
+        options = new ArrayList<>(Arrays.asList(option1));
+        mainMenu = new MainMenu(options);
+        System.setIn(new ByteArrayInputStream("3".getBytes()));
+        //mainMenu.PrintAllMenuList();
+        mainMenu.UserSelectOptions();
+        assertEquals(InvalidOption + "\n", MainMenuOutput.toString());
     }
 }
 
