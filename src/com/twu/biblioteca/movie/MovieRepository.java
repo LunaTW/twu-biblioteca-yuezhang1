@@ -16,11 +16,21 @@ public class MovieRepository {
             new Movie("The Godfather: Part II","Francis Ford Coppola",Year.of(1974))
     ));
 
+    public static List<Movie> checkedOutMovies = new ArrayList<>(Arrays.asList(
+            new Movie("Back to the Future","Robert Zemeckis",Year.of(1985)),
+            new Movie("1917","Sam Mendes",Year.of(2019))
+    ));
+
+
     public MovieRepository(List<Movie> availableMovies) {
     }
 
     public List<Movie> getAvailableMovies() {
         return availableMovies;
+    }
+
+    public List<Movie> getCheckedOutMovies() {
+        return checkedOutMovies;
     }
     public void addMovie(Movie movie) {
         availableMovies.add(movie);
@@ -31,9 +41,24 @@ public class MovieRepository {
                 .findFirst().orElse(null);
         if(MovieWouldLikeToCheckOut != null){
             availableMovies.remove(MovieWouldLikeToCheckOut);
+            checkedOutMovies.add(MovieWouldLikeToCheckOut);
             return true;
         }else{
             return false;
         }
+    }
+
+
+    public boolean returnMovie(String title) {
+        Movie MovieWouldLikeToReturn = checkedOutMovies.stream().filter(movie -> movie.getTitle().equals(title))
+                .findFirst().orElse(null);
+        if(MovieWouldLikeToReturn != null){
+            availableMovies.add(MovieWouldLikeToReturn);
+            checkedOutMovies.remove(MovieWouldLikeToReturn);
+            return true;
+        }else{
+            return false;
+        }
+
     }
 }

@@ -77,6 +77,10 @@ public class MainMenu {
                         movieName = scanner.nextLine();
                         checkOutMovie(movieName);
                         break;
+                    case "Return a movie":
+                        movieName = scanner.nextLine();
+                        returnMovie(movieName);
+                        break;
                     case "Quit":
                         System.out.println("Goodbye!");
                         System.exit(0);
@@ -124,4 +128,11 @@ public class MainMenu {
         System.out.println("Which movie would you like to checkout?[Please input MOVIE NAME]");
         System.out.println(movieRepository.checkOutMovie(input)? "Thank you! Enjoy the movie." : "Sorry, that movie is not available.");
     }
+
+    private void returnMovie(String movieName){
+        String input = movieName;
+        System.out.println("Which movie would you like to Return?[Please input MOVIE NAME]");
+        System.out.println(movieRepository.returnMovie(input)? "Thanks for your return, have a good day" : "This movie may not borrowed from our library, please contact the librarian if not.");
+    }
+
 }

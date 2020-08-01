@@ -32,24 +32,16 @@ public class MainMenuTest {
     private String option3 = "Return a book";
     private String option4 = "List of movies";
     private String option5 = "Checkout a movie";
+    private String option6 = "Return a movie";
     //private String option6 = "View books checked out";
     //private String option7 = "Login";
     //private String option8 = "View my information";
-    private String option9 = "Quit";
+    private String option10 = "Quit";
 
     /** Handles System.exit() calls. */
     //@Rule
     //public final ExpectedSystemExit exit = ExpectedSystemExit.none();
 
-    /*
-    private static List<Book> availableBooks = new ArrayList<>(Arrays.asList(
-            new Book("01","The little prince","Antoine de Saint-Exupery","9787539998312", Year.of(2017)),
-            new Book("02","And Then There were none","Agatha Christie","9780007136834",Year.of(2007)),
-            new Book("03","Harry Potter","Joanne Rowling","9573317249234",Year.of(2008))
-    ));
-    private static List<Book> checkedOutBooks = new ArrayList<>(Arrays.asList(
-            new Book("04","Happy Reading","Luna","2434", Year.of(2020))
-    ));*/
     BookRepository bookRepository = new BookRepository(BookRepository.availableBooks);
     MovieRepository movieRepository = new MovieRepository(MovieRepository.availableMovies);
 
@@ -198,7 +190,7 @@ public class MainMenuTest {
     //*********************************** (1.6) Quit the application *********************************** //
 /*    @Test
     public void QuitTheApplication(){
-        options = new ArrayList<>(Arrays.asList(option1,option2,option3,option9));
+        options = new ArrayList<>(Arrays.asList(option1,option2,option3,option10));
         mainMenu = new MainMenu(options,bookRepository,movieRepository);
         System.setIn(new ByteArrayInputStream("4".getBytes()));
         mainMenu.UserSelectOptions();
@@ -210,7 +202,7 @@ public class MainMenuTest {
     //*********************************** (2.1) View a list of available movies *********************************** //
     @Test //包含了完成的电影信息 option4
     public void ViewAListOfMovies(){
-        options = new ArrayList<>(Arrays.asList(option1,option2,option3,option4,option9));
+        options = new ArrayList<>(Arrays.asList(option1,option2,option3,option4,option10));
         mainMenu = new MainMenu(options,bookRepository,movieRepository);
         System.setIn(new ByteArrayInputStream("4".getBytes()));
         mainMenu.UserSelectOptions();
@@ -226,7 +218,7 @@ public class MainMenuTest {
     //*********************************** (2.2) Checkout a movie *********************************** //
     @Test
     public void CheckoutMovie_Successfully(){
-        options = new ArrayList<>(Arrays.asList(option1,option2,option3,option4,option5,option9));
+        options = new ArrayList<>(Arrays.asList(option1,option2,option3,option4,option5,option10));
         mainMenu = new MainMenu(options,bookRepository,movieRepository);
         assertNotEquals(MovieRepository.availableMovies.stream().filter(movie -> movie.getTitle().equals("The Shawshank Redemption")).findFirst().orElse(null),null);
         System.setIn(new ByteArrayInputStream("5\nThe Shawshank Redemption".getBytes()));
@@ -237,13 +229,32 @@ public class MainMenuTest {
 
     @Test
     public void CheckoutMovie_Unsuccessfully(){
-        options = new ArrayList<>(Arrays.asList(option1,option2,option3,option4,option5,option9));
+        options = new ArrayList<>(Arrays.asList(option1,option2,option3,option4,option5,option10));
         mainMenu = new MainMenu(options,bookRepository,movieRepository);
         System.setIn(new ByteArrayInputStream("5\nNotExisted Movie Name".getBytes()));
         mainMenu.UserSelectOptions();
         assertThat(MainMenuOutput.toString(),containsString("Sorry, that movie is not available."));
     }
+    //******************* (2.2) - extend -- Return a movie *********************************** //
+    @Test
+    public void ReturnMovie_Successfully(){
+        assertEquals(MovieRepository.availableMovies.stream().filter(movie -> movie.getTitle().equals("Back to the Future")).findFirst().orElse(null),null);
+        assertNotEquals(MovieRepository.checkedOutMovies.stream().filter(movie -> movie.getTitle().equals("Back to the Future")).findFirst().orElse(null),null);
+        options = new ArrayList<>(Arrays.asList(option1,option2,option3,option4,option5,option6,option10));
+        mainMenu = new MainMenu(options,bookRepository,movieRepository);
+        System.setIn(new ByteArrayInputStream("6\nBack to the Future".getBytes()));
+        mainMenu.UserSelectOptions();
+        assertNotEquals(MovieRepository.availableMovies.stream().filter(movie -> movie.getTitle().equals("Back to the Future")).findFirst().orElse(null),null);
+        assertEquals(MovieRepository.checkedOutMovies.stream().filter(movie -> movie.getTitle().equals("Back to the Future")).findFirst().orElse(null),null);
+    }
 
-
-
+    @Test
+    public void ReturnMovie_Unsuccessfully(){
+        options = new ArrayList<>(Arrays.asList(option1,option2,option3,option4,option5,option6,option10));
+        mainMenu = new MainMenu(options,bookRepository,movieRepository);
+        System.setIn(new ByteArrayInputStream("6\nINVALID MOVIE NAME".getBytes()));
+        mainMenu.UserSelectOptions();
+        assertEquals(MovieRepository.availableMovies.stream().filter(movie -> movie.getTitle().equals("INVALID MOVIE NAME")).findFirst().orElse(null),null);
+        assertThat(MainMenuOutput.toString(),containsString("This movie may not borrowed from our library, please contact the librarian if not."));
+    }
 }
