@@ -137,9 +137,10 @@ public class MainMenuTest {
     public void CheckoutABook_Successfully(){
         options = new ArrayList<>(Arrays.asList(option1,option2));
         mainMenu = new MainMenu(options,bookRepository);
+        assertNotEquals(BookRepository.availableBooks.stream().filter(book -> book.getTitle().equals("The little prince")).findFirst().orElse(null),null);
         System.setIn(new ByteArrayInputStream("2\nThe little prince".getBytes()));
         mainMenu.UserSelectOptions();
-        MainMenuOutput.toString();
+        //MainMenuOutput.toString();
         assertEquals(BookRepository.availableBooks.stream().filter(book -> book.getTitle().equals("The little prince")).findFirst().orElse(null),null);
         assertNotEquals(BookRepository.availableBooks.stream().filter(book -> book.getTitle().equals("And Then There were none")).findFirst().orElse(null),null);
         assertNotEquals(BookRepository.availableBooks.stream().filter(book -> book.getTitle().equals("Harry Potter")).findFirst().orElse(null),null);
@@ -152,10 +153,43 @@ public class MainMenuTest {
         mainMenu = new MainMenu(options,bookRepository);
         System.setIn(new ByteArrayInputStream("2\nThis is an INVALID BookName".getBytes()));
         mainMenu.UserSelectOptions();
-        MainMenuOutput.toString();
+        //MainMenuOutput.toString();
         assertThat(MainMenuOutput.toString(),containsString("Sorry, that book is not available."));
-
     }
+
+    //*********************************** (1.10) Return a book *********************************** //
+    /*  1. 正确还书（已借出书单里有这本书）=> 可借书单里添加了这本书 & 已借出书单里删除了这本书 (1.11) Notified on successful return
+        2. 错误借书 已借出书单里无此书 => 此书暂时不可还，【不属于这个图书馆或找管理员咨询】(1.12) Notified on unsuccessful return
+     */
+
+    @Test
+    public void RetrunABook_Successfully(){
+        assertEquals(BookRepository.availableBooks.stream().filter(book -> book.getTitle().equals("Happy Coding")).findFirst().orElse(null),null);
+        assertNotEquals(BookRepository.checkedOutBooks.stream().filter(book -> book.getTitle().equals("Happy Coding")).findFirst().orElse(null),null);
+        options = new ArrayList<>(Arrays.asList(option1,option2,option3));
+        mainMenu = new MainMenu(options,bookRepository);
+        System.setIn(new ByteArrayInputStream("3\nHappy Coding".getBytes()));
+        mainMenu.UserSelectOptions();
+        assertNotEquals(BookRepository.availableBooks.stream().filter(book -> book.getTitle().equals("Happy Coding")).findFirst().orElse(null),null);
+        assertEquals(BookRepository.checkedOutBooks.stream().filter(book -> book.getTitle().equals("Happy Coding")).findFirst().orElse(null),null);
+    }
+
+    @Test
+    public void RetrunABook_Unsuccessfully(){
+        options = new ArrayList<>(Arrays.asList(option1,option2,option3));
+        mainMenu = new MainMenu(options,bookRepository);
+        System.setIn(new ByteArrayInputStream("3\nHappy Studying".getBytes()));
+        mainMenu.UserSelectOptions();
+        assertThat(MainMenuOutput.toString(),containsString("This book may not borrowed from our library, please contact the librarian if not."));
+    }
+
+
+
+
+
+
+
+
 }
 
 
