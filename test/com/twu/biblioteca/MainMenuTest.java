@@ -11,8 +11,9 @@ import java.time.Year;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.junit.Assert.*;
 
 
 public class MainMenuTest {
@@ -21,13 +22,24 @@ public class MainMenuTest {
     private ByteArrayOutputStream MainMenuOutput;
     private String InvalidOption = "Please select a valid option";
     private String option1="List of books";
-
-    List<Book> BookList = new ArrayList<>(Arrays.asList(
-            new Book("title1","author1","isbn2", Year.of(2020)),
-            new Book("title2","author2","isbn2",Year.of(2020)),
-            new Book("title3","author3","isbn3",Year.of(2020))
+    private String option2 = "Checkout a book";
+    private String option3 = "Return a book";
+    //private String option4 = "List of movies";
+    //private String option5 = "Checkout a movie";
+    //private String option6 = "View books checked out";
+    //private String option7 = "Login";
+    //private String option8 = "View my information";
+    private String option9 = "Quit";
+    /*
+    private static List<Book> availableBooks = new ArrayList<>(Arrays.asList(
+            new Book("01","The little prince","Antoine de Saint-Exupery","9787539998312", Year.of(2017)),
+            new Book("02","And Then There were none","Agatha Christie","9780007136834",Year.of(2007)),
+            new Book("03","Harry Potter","Joanne Rowling","9573317249234",Year.of(2008))
     ));
-    BookRepository bookRepository = new BookRepository(BookList);
+    private static List<Book> checkedOutBooks = new ArrayList<>(Arrays.asList(
+            new Book("04","Happy Reading","Luna","2434", Year.of(2020))
+    ));*/
+    BookRepository bookRepository = new BookRepository(BookRepository.availableBooks);
 
     @Before
     public void setUp() throws Exception{
@@ -109,16 +121,41 @@ public class MainMenuTest {
         System.setIn(new ByteArrayInputStream("1".getBytes()));
         mainMenu.UserSelectOptions();
         mainMenu.PrintAllMenuList();
-        assertEquals("** Title **                   | ** Author **                  | ** ISBN **     | ** Year **\n" +
-                                "The little prince             | Antoine de Saint-Exupery      | 9787539998312  | 2017  \n" +
-                                "And Then There were none      | Agatha Christie               | 9780007136834  | 2007  \n" +
-                                "Harry Potter                  | Joanne Rowling                | 9573317249234  | 2008  \n" +
+        assertEquals("** Index **| ** Title **                   | ** Author **                  | ** ISBN **     | ** Year **\n" +
+                                "01         | The little prince             | Antoine de Saint-Exupery      | 9787539998312  | 2017  \n" +
+                                "02         | And Then There were none      | Agatha Christie               | 9780007136834  | 2007  \n" +
+                                "03         | Harry Potter                  | Joanne Rowling                | 9573317249234  | 2008  \n" +
                                 "------------------------------------------------------\n" +
                                 "1- " + option1 + "\n", MainMenuOutput.toString());
     }
 
+    //*********************************** (1.7) Checkout a book *********************************** //
+    /*  1. 正确借书（可借书单里有这本书）=> 可借书单里没有了这本书 & 已借出书单里有了这本书
+        2. 错误借书 可借书单里无此书 => 此书暂时不可借
+     */
+    @Test
+    public void CheckoutABook_Successfully(){
+        options = new ArrayList<>(Arrays.asList(option1,option2));
+        mainMenu = new MainMenu(options,bookRepository);
+        System.setIn(new ByteArrayInputStream("2\nThe little prince".getBytes()));
+        mainMenu.UserSelectOptions();
+        MainMenuOutput.toString();
+        assertEquals(BookRepository.availableBooks.stream().filter(book -> book.getTitle().equals("The little prince")).findFirst().orElse(null),null);
+        assertNotEquals(BookRepository.availableBooks.stream().filter(book -> book.getTitle().equals("And Then There were none")).findFirst().orElse(null),null);
+        assertNotEquals(BookRepository.availableBooks.stream().filter(book -> book.getTitle().equals("Harry Potter")).findFirst().orElse(null),null);
+        assertThat(MainMenuOutput.toString(),containsString("Thank you! Enjoy the book."));
+    }
 
+    @Test
+    public void CheckoutABook_Unsuccessfully(){
+        options = new ArrayList<>(Arrays.asList(option1,option2));
+        mainMenu = new MainMenu(options,bookRepository);
+        System.setIn(new ByteArrayInputStream("2\nThis is an INVALID BookName".getBytes()));
+        mainMenu.UserSelectOptions();
+        MainMenuOutput.toString();
+        assertThat(MainMenuOutput.toString(),containsString("Sorry, that book is not available."));
 
+    }
 }
 
 

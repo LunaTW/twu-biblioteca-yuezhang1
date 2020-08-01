@@ -2,7 +2,6 @@ package com.twu.biblioteca;
 
 import com.twu.biblioteca.book.Book;
 import com.twu.biblioteca.book.BookRepository;
-
 import java.util.List;
 import java.util.Scanner;
 import java.util.stream.IntStream;
@@ -11,6 +10,8 @@ import java.util.stream.IntStream;
 public class MainMenu {
     private List<String> options;
     private BookRepository bookRepository;
+    private Scanner scanner;
+    String bookName;
 
     public MainMenu(List<String> options,BookRepository bookRepository){
         this.options = options;
@@ -42,6 +43,7 @@ public class MainMenu {
     //如何使用scanner https://www.runoob.com/java/java-scanner-class.html
     public void UserSelectOptions(){
         //从键盘接收数据
+
         Scanner scanner = new Scanner(System.in);
         // 判断是否还有输入
         if(scanner.hasNext()){
@@ -51,9 +53,16 @@ public class MainMenu {
             //只有当选项有效的时候才进行
             if(CheckInputIsValid(InputOption)){
                 String optionChoice = options.get(Integer.valueOf(InputOption)-1); //index 比本身小1
+                //System.out.println(optionChoice);
                 switch (optionChoice){
                     case "List of books":
+                        //System.out.println("List of books");
                         displayBooks();
+                        break;
+                    case "Checkout a book":
+                        //System.out.println("Checkout a book");
+                        bookName = scanner.nextLine();
+                        checkOutBook(bookName);
                         break;
                 }
             }
@@ -62,13 +71,18 @@ public class MainMenu {
 
 
     public void displayBooks(){
-        System.out.printf("%-30s%-2s%-30s%-2s%-15s%-2s%-6s%n", "** Title **","|", "** Author **","|", "** ISBN **", "|","** Year **");
+        System.out.printf("%-11s%-2s%-30s%-2s%-30s%-2s%-15s%-2s%-6s%n","** Index **","|","** Title **","|", "** Author **","|", "** ISBN **", "|","** Year **");
         for (Book book: bookRepository.getAvailableBooks()){
-            System.out.printf("%-30s%-2s%-30s%-2s%-15s%-2s%-6s%n", book.getTitle(), "|",
+            System.out.printf("%-11s%-2s%-30s%-2s%-30s%-2s%-15s%-2s%-6s%n", book.getindex(),"|",book.getTitle(), "|",
                     book.getAuthor(), "|", book.getIsbn(), "|", book.getYear());
         }
         System.out.printf("------------------------------------------------------\n");
     }
+
+    private void checkOutBook(String bookName) {
+        String input;
+        System.out.println("Which book would you like to checkout?[Please input BOOK NAME]");
+        input = bookName;
+        System.out.println(bookRepository.checkOutBook(input)? "Thank you! Enjoy the book." : "Sorry, that book is not available.");
+    }
 }
-
-
