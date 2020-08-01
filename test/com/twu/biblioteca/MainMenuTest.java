@@ -224,7 +224,26 @@ public class MainMenuTest {
     }
 
     //*********************************** (2.2) Checkout a movie *********************************** //
+    @Test
+    public void CheckoutMovie_Successfully(){
+        options = new ArrayList<>(Arrays.asList(option1,option2,option3,option4,option5,option9));
+        mainMenu = new MainMenu(options,bookRepository,movieRepository);
+        assertNotEquals(MovieRepository.availableMovies.stream().filter(movie -> movie.getTitle().equals("The Shawshank Redemption")).findFirst().orElse(null),null);
+        System.setIn(new ByteArrayInputStream("5\nThe Shawshank Redemption".getBytes()));
+        mainMenu.UserSelectOptions();
+        assertEquals(MovieRepository.availableMovies.stream().filter(movie -> movie.getTitle().equals("The Shawshank Redemption")).findFirst().orElse(null),null);
+        assertThat(MainMenuOutput.toString(),containsString("Thank you! Enjoy the movie."));
+    }
+
+    @Test
+    public void CheckoutMovie_Unsuccessfully(){
+        options = new ArrayList<>(Arrays.asList(option1,option2,option3,option4,option5,option9));
+        mainMenu = new MainMenu(options,bookRepository,movieRepository);
+        System.setIn(new ByteArrayInputStream("5\nNotExisted Movie Name".getBytes()));
+        mainMenu.UserSelectOptions();
+        assertThat(MainMenuOutput.toString(),containsString("Sorry, that movie is not available."));
+    }
+
 
 
 }
-

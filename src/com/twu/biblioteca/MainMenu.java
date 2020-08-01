@@ -16,6 +16,7 @@ public class MainMenu {
     private MovieRepository movieRepository;
     private Scanner scanner;
     String bookName;
+    String movieName;
 
     public MainMenu(List<String> options,BookRepository bookRepository,MovieRepository movieRepository){
         this.options = options;
@@ -72,6 +73,10 @@ public class MainMenu {
                     case "List of movies":
                         displayMovies();
                         break;
+                    case "Checkout a movie":
+                        movieName = scanner.nextLine();
+                        checkOutMovie(movieName);
+                        break;
                     case "Quit":
                         System.out.println("Goodbye!");
                         System.exit(0);
@@ -117,6 +122,6 @@ public class MainMenu {
     private void checkOutMovie(String movieName){
         String input = movieName;
         System.out.println("Which movie would you like to checkout?[Please input MOVIE NAME]");
-        System.out.println(movieRepository.checkOutMovie(input)? "Thank you! Enjoy the book." : "Sorry, that book is not available.");
+        System.out.println(movieRepository.checkOutMovie(input)? "Thank you! Enjoy the movie." : "Sorry, that movie is not available.");
     }
 }
