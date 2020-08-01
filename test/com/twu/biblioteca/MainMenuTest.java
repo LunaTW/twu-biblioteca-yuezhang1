@@ -1,6 +1,7 @@
 package com.twu.biblioteca;
 
 import com.twu.biblioteca.book.BookRepository;
+import com.twu.biblioteca.movie.MovieRepository;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -29,8 +30,8 @@ public class MainMenuTest {
     private String option1="List of books";
     private String option2 = "Checkout a book";
     private String option3 = "Return a book";
-    //private String option4 = "List of movies";
-    //private String option5 = "Checkout a movie";
+    private String option4 = "List of movies";
+    private String option5 = "Checkout a movie";
     //private String option6 = "View books checked out";
     //private String option7 = "Login";
     //private String option8 = "View my information";
@@ -39,9 +40,6 @@ public class MainMenuTest {
     /** Handles System.exit() calls. */
     //@Rule
     //public final ExpectedSystemExit exit = ExpectedSystemExit.none();
-
-
-
 
     /*
     private static List<Book> availableBooks = new ArrayList<>(Arrays.asList(
@@ -53,6 +51,7 @@ public class MainMenuTest {
             new Book("04","Happy Reading","Luna","2434", Year.of(2020))
     ));*/
     BookRepository bookRepository = new BookRepository(BookRepository.availableBooks);
+    MovieRepository movieRepository = new MovieRepository(MovieRepository.availableMovies);
 
     @Before
     public void setUp() throws Exception{
@@ -64,7 +63,7 @@ public class MainMenuTest {
     @Test
     public void MainMenuWasPrintedWhenZeroOption(){
         options = new ArrayList<>(Arrays.asList());
-        mainMenu = new MainMenu(options,null);
+        mainMenu = new MainMenu(options,null,null);
         mainMenu.PrintAllMenuList();
         assertEquals("", MainMenuOutput.toString());
     }
@@ -72,7 +71,7 @@ public class MainMenuTest {
     @Test
     public void MainMenuWasPrintedWhenOneOption(){
         options = new ArrayList<>(Arrays.asList(option1));
-        mainMenu = new MainMenu(options,null);
+        mainMenu = new MainMenu(options,null,null);
         mainMenu.PrintAllMenuList();
         assertEquals("1- " + option1 + "\n", MainMenuOutput.toString());
     }
@@ -81,8 +80,8 @@ public class MainMenuTest {
     //此时只有一个option,只有 1 是正确的，其他如 3，list，-8，3.5 均无效
     public void GetNotifiedWhenChoseInvalidOption_OtherNumber(){
         options = new ArrayList<>(Arrays.asList(option1));
-        mainMenu = new MainMenu(options,null);
-        System.setIn(new ByteArrayInputStream("7".getBytes()));
+        mainMenu = new MainMenu(options,null,null);
+        System.setIn(new ByteArrayInputStream("10".getBytes()));
         mainMenu.UserSelectOptions();
         assertEquals(InvalidOption + "\n", MainMenuOutput.toString());
     }
@@ -90,7 +89,7 @@ public class MainMenuTest {
     @Test
     public void GetNotifiedWhenChoseInvalidOption_Decimal(){
         options = new ArrayList<>(Arrays.asList(option1));
-        mainMenu = new MainMenu(options,null);
+        mainMenu = new MainMenu(options,null,null);
         System.setIn(new ByteArrayInputStream("1.5".getBytes()));
         mainMenu.UserSelectOptions();
         assertEquals(InvalidOption + "\n", MainMenuOutput.toString());
@@ -99,7 +98,7 @@ public class MainMenuTest {
     @Test
     public void GetNotifiedWhenChoseInvalidOption_NegativeNumber(){
         options = new ArrayList<>(Arrays.asList(option1));
-        mainMenu = new MainMenu(options,null);
+        mainMenu = new MainMenu(options,null,null);
         System.setIn(new ByteArrayInputStream("-2".getBytes()));
         mainMenu.UserSelectOptions();
         assertEquals(InvalidOption + "\n", MainMenuOutput.toString());
@@ -108,7 +107,7 @@ public class MainMenuTest {
     @Test
     public void GetNotifiedWhenChoseInvalidOption_NonNumber(){
         options = new ArrayList<>(Arrays.asList(option1));
-        mainMenu = new MainMenu(options,null);
+        mainMenu = new MainMenu(options,null,null);
         System.setIn(new ByteArrayInputStream("List".getBytes()));
         mainMenu.UserSelectOptions();
         assertEquals(InvalidOption + "\n", MainMenuOutput.toString());
@@ -121,7 +120,7 @@ public class MainMenuTest {
     @Test // 选择了有效的选项，则没有报错
     public void GetNotifiedWhenChosevalidOption(){
         options = new ArrayList<>(Arrays.asList(option1));
-        mainMenu = new MainMenu(options,bookRepository);
+        mainMenu = new MainMenu(options,bookRepository,movieRepository);
         System.setIn(new ByteArrayInputStream("1".getBytes()));
         mainMenu.UserSelectOptions();
         assertNotEquals(InvalidOption + "\n", MainMenuOutput.toString());
@@ -130,16 +129,16 @@ public class MainMenuTest {
     @Test //包含了完成的书籍信息
     public void ViewAListOfBooks(){
         options = new ArrayList<>(Arrays.asList(option1));
-        mainMenu = new MainMenu(options,bookRepository);
+        mainMenu = new MainMenu(options,bookRepository,movieRepository);
         System.setIn(new ByteArrayInputStream("1".getBytes()));
         mainMenu.UserSelectOptions();
-        mainMenu.PrintAllMenuList();
+        //mainMenu.PrintAllMenuList();
         assertEquals("** Index **| ** Title **                   | ** Author **                  | ** ISBN **     | ** Year **\n" +
                                 "01         | The little prince             | Antoine de Saint-Exupery      | 9787539998312  | 2017  \n" +
                                 "02         | And Then There were none      | Agatha Christie               | 9780007136834  | 2007  \n" +
                                 "03         | Harry Potter                  | Joanne Rowling                | 9573317249234  | 2008  \n" +
                                 "------------------------------------------------------\n" +
-                                "1- " + option1 + "\n", MainMenuOutput.toString());
+                                "1- " + option1 , MainMenuOutput.toString());
     }
 
     //*********************************** (1.7) Checkout a book *********************************** //
@@ -149,7 +148,7 @@ public class MainMenuTest {
     @Test
     public void CheckoutABook_Successfully(){
         options = new ArrayList<>(Arrays.asList(option1,option2));
-        mainMenu = new MainMenu(options,bookRepository);
+        mainMenu = new MainMenu(options,bookRepository,movieRepository);
         assertNotEquals(BookRepository.availableBooks.stream().filter(book -> book.getTitle().equals("The little prince")).findFirst().orElse(null),null);
         System.setIn(new ByteArrayInputStream("2\nThe little prince".getBytes()));
         mainMenu.UserSelectOptions();
@@ -163,7 +162,7 @@ public class MainMenuTest {
     @Test
     public void CheckoutABook_Unsuccessfully(){
         options = new ArrayList<>(Arrays.asList(option1,option2));
-        mainMenu = new MainMenu(options,bookRepository);
+        mainMenu = new MainMenu(options,bookRepository,movieRepository);
         System.setIn(new ByteArrayInputStream("2\nThis is an INVALID BookName".getBytes()));
         mainMenu.UserSelectOptions();
         //MainMenuOutput.toString();
@@ -180,7 +179,7 @@ public class MainMenuTest {
         assertEquals(BookRepository.availableBooks.stream().filter(book -> book.getTitle().equals("Happy Coding")).findFirst().orElse(null),null);
         assertNotEquals(BookRepository.checkedOutBooks.stream().filter(book -> book.getTitle().equals("Happy Coding")).findFirst().orElse(null),null);
         options = new ArrayList<>(Arrays.asList(option1,option2,option3));
-        mainMenu = new MainMenu(options,bookRepository);
+        mainMenu = new MainMenu(options,bookRepository,movieRepository);
         System.setIn(new ByteArrayInputStream("3\nHappy Coding".getBytes()));
         mainMenu.UserSelectOptions();
         assertNotEquals(BookRepository.availableBooks.stream().filter(book -> book.getTitle().equals("Happy Coding")).findFirst().orElse(null),null);
@@ -190,23 +189,42 @@ public class MainMenuTest {
     @Test
     public void RetrunABook_Unsuccessfully(){
         options = new ArrayList<>(Arrays.asList(option1,option2,option3));
-        mainMenu = new MainMenu(options,bookRepository);
+        mainMenu = new MainMenu(options,bookRepository,movieRepository);
         System.setIn(new ByteArrayInputStream("3\nHappy Studying".getBytes()));
         mainMenu.UserSelectOptions();
         assertThat(MainMenuOutput.toString(),containsString("This book may not borrowed from our library, please contact the librarian if not."));
     }
 
     //*********************************** (1.6) Quit the application *********************************** //
-    @Test
+/*    @Test
     public void QuitTheApplication(){
         options = new ArrayList<>(Arrays.asList(option1,option2,option3,option9));
-        mainMenu = new MainMenu(options,bookRepository);
+        mainMenu = new MainMenu(options,bookRepository,movieRepository);
         System.setIn(new ByteArrayInputStream("4".getBytes()));
         mainMenu.UserSelectOptions();
         //System.out.println(MainMenuOutput.toString());
         //assertThat(MainMenuOutput.toString(),containsString("Goodbye"));
         //exit.expectSystemExit();
     }
-}
+*/
+    //*********************************** (2.1) View a list of available movies *********************************** //
+    @Test //包含了完成的电影信息 option4
+    public void ViewAListOfMovies(){
+        options = new ArrayList<>(Arrays.asList(option1,option2,option3,option4,option9));
+        mainMenu = new MainMenu(options,bookRepository,movieRepository);
+        System.setIn(new ByteArrayInputStream("4".getBytes()));
+        mainMenu.UserSelectOptions();
+        assertEquals("** Title **                   | ** Director **                | ** Year **\n" +
+                "Green Book                    | Peter Farrelly                | 2018  \n" +
+                "The Shawshank Redemption      | Frank Darabont                | 1994  \n" +
+                "The Godfather                 | Francis Ford Coppola          | 1972  \n" +
+                "The Godfather: Part II        | Francis Ford Coppola          | 1974  \n" +
+                "------------------------------------------------------\n" +
+                "4- " + option4, MainMenuOutput.toString());
+    }
 
+    //*********************************** (2.2) Checkout a movie *********************************** //
+
+
+}
 

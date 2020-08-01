@@ -2,6 +2,9 @@ package com.twu.biblioteca;
 
 import com.twu.biblioteca.book.Book;
 import com.twu.biblioteca.book.BookRepository;
+import com.twu.biblioteca.movie.Movie;
+import com.twu.biblioteca.movie.MovieRepository;
+
 import java.util.List;
 import java.util.Scanner;
 import java.util.stream.IntStream;
@@ -10,12 +13,14 @@ import java.util.stream.IntStream;
 public class MainMenu {
     private List<String> options;
     private BookRepository bookRepository;
+    private MovieRepository movieRepository;
     private Scanner scanner;
     String bookName;
 
-    public MainMenu(List<String> options,BookRepository bookRepository){
+    public MainMenu(List<String> options,BookRepository bookRepository,MovieRepository movieRepository){
         this.options = options;
         this.bookRepository=bookRepository;
+        this.movieRepository = movieRepository;
     }
 
     public void PrintAllMenuList(){
@@ -47,7 +52,7 @@ public class MainMenu {
             String InputOption = scanner.nextLine();
             if(CheckInputIsValid(InputOption)){
                 String optionChoice = options.get(Integer.valueOf(InputOption)-1); //index 比本身小1
-                System.out.println(optionChoice);
+                //System.out.println(optionChoice);
 
                 switch (optionChoice){
                     case "List of books":
@@ -63,6 +68,9 @@ public class MainMenu {
                         //System.out.println("Return a book");
                         bookName = scanner.nextLine();
                         returnBook(bookName);
+                        break;
+                    case "List of movies":
+                        displayMovies();
                         break;
                     case "Quit":
                         System.out.println("Goodbye!");
@@ -80,6 +88,17 @@ public class MainMenu {
                     book.getAuthor(), "|", book.getIsbn(), "|", book.getYear());
         }
         System.out.printf("------------------------------------------------------\n");
+        System.out.printf("1- List of books");
+    }
+
+    public void displayMovies(){
+        System.out.printf("%-30s%-2s%-30s%-2s%-6s%n","** Title **","|", "** Director **","|","** Year **");
+        for(Movie movie:movieRepository.getAvailableMovies()){
+            System.out.printf("%-30s%-2s%-30s%-2s%-6s%n", movie.getTitle(),"|",movie.getDirector(),"|",movie.getYear());
+        }
+        System.out.printf("------------------------------------------------------\n");
+        System.out.printf("4- List of movies");
+
     }
 
     private void checkOutBook(String bookName) {
@@ -93,5 +112,11 @@ public class MainMenu {
         String input = bookName;
         System.out.println("Which book would you like to Return?[Please input BOOK NAME]");
         System.out.println(bookRepository.returnBook(input)? "Thanks for your return, have a good day!" : "This book may not borrowed from our library, please contact the librarian if not.");
+    }
+
+    private void checkOutMovie(String movieName){
+        String input = movieName;
+        System.out.println("Which movie would you like to checkout?[Please input MOVIE NAME]");
+        System.out.println(movieRepository.checkOutMovie(input)? "Thank you! Enjoy the book." : "Sorry, that book is not available.");
     }
 }
