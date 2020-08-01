@@ -1,13 +1,18 @@
 package com.twu.biblioteca;
 
-import com.twu.biblioteca.book.Book;
 import com.twu.biblioteca.book.BookRepository;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import java.lang.Object;
+import org.junit.rules.TestRule;
+//import org.junit.contrib.java.lang.system.ExpectedSystemExit;
+//https://stefanbirkner.github.io/system-rules/apidocs/org/junit/contrib/java/lang/system/SystemOutRule.html
+
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.time.Year;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -30,6 +35,14 @@ public class MainMenuTest {
     //private String option7 = "Login";
     //private String option8 = "View my information";
     private String option9 = "Quit";
+
+    /** Handles System.exit() calls. */
+    //@Rule
+    //public final ExpectedSystemExit exit = ExpectedSystemExit.none();
+
+
+
+
     /*
     private static List<Book> availableBooks = new ArrayList<>(Arrays.asList(
             new Book("01","The little prince","Antoine de Saint-Exupery","9787539998312", Year.of(2017)),
@@ -183,13 +196,17 @@ public class MainMenuTest {
         assertThat(MainMenuOutput.toString(),containsString("This book may not borrowed from our library, please contact the librarian if not."));
     }
 
-
-
-
-
-
-
-
+    //*********************************** (1.6) Quit the application *********************************** //
+    @Test
+    public void QuitTheApplication(){
+        options = new ArrayList<>(Arrays.asList(option1,option2,option3,option9));
+        mainMenu = new MainMenu(options,bookRepository);
+        System.setIn(new ByteArrayInputStream("4".getBytes()));
+        mainMenu.UserSelectOptions();
+        //System.out.println(MainMenuOutput.toString());
+        //assertThat(MainMenuOutput.toString(),containsString("Goodbye"));
+        //exit.expectSystemExit();
+    }
 }
 
 

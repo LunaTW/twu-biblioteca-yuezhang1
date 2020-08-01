@@ -47,6 +47,8 @@ public class MainMenu {
             String InputOption = scanner.nextLine();
             if(CheckInputIsValid(InputOption)){
                 String optionChoice = options.get(Integer.valueOf(InputOption)-1); //index 比本身小1
+                System.out.println(optionChoice);
+
                 switch (optionChoice){
                     case "List of books":
                         //System.out.println("List of books");
@@ -58,9 +60,13 @@ public class MainMenu {
                         checkOutBook(bookName);
                         break;
                     case "Return a book":
-                        System.out.println("Return a book");
+                        //System.out.println("Return a book");
                         bookName = scanner.nextLine();
                         returnBook(bookName);
+                        break;
+                    case "Quit":
+                        System.out.println("Goodbye!");
+                        System.exit(0);
                 }
             }
         }
