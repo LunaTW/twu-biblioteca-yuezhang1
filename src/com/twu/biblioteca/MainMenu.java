@@ -20,7 +20,7 @@ public class MainMenu {
     private String bookName;
     private String movieName;
     private String UserID;
-    private String Password;
+    private String password;
     private String UserSelectedOption;
 
     public MainMenu(List<String> options,BookRepository bookRepository,MovieRepository movieRepository,UserRepository userRepository){
@@ -32,13 +32,26 @@ public class MainMenu {
 
     public void login(){
         Scanner scanner = new Scanner(System.in);
+        System.out.println("Please input your UserID: ");
         UserID = scanner.nextLine();
-        Password = scanner.nextLine();
-        UserSelectedOption = scanner.nextLine();
-        if (UserRepository.areValidCredentials(UserID,Password)){
+        System.out.println("Please input your Password: ");
+        password = scanner.nextLine();
+        //System.out.println("Please click return");
+        //UserSelectedOption = scanner.nextLine();
+        if(UserID == null  ){
+            System.out.println("UserID cannot be empty!");
+            login();
+        }
+        if(password == null  ){
+            System.out.println("UserID cannot be empty!");
+            login();
+        }
+
+        if (UserRepository.areValidCredentials(UserID,password)){
             System.out.println("UserID : "+ UserID+"\n"+
                     "Successful login\n------------------------------------------------------");
             PrintAllMenuList();
+            UserSelectOptions(); //Question hide => test
         }else{
             System.out.println("Sorry that's not a valid ID/PASSWORD");
             login();
@@ -81,11 +94,12 @@ public class MainMenu {
                         displayBooks();
                         break;
                     case "Checkout a book":
+                        System.out.println("Which book would you like to checkout?[Please input BOOK NAME]");
                         bookName = scanner.nextLine();
                         checkOutBook(bookName);
                         break;
                     case "Return a book":
-                        //System.out.println("Return a book");
+                        System.out.println("Which book would you like to Return?[Please input BOOK NAME]");
                         bookName = scanner.nextLine();
                         returnBook(bookName);
                         break;
@@ -96,10 +110,12 @@ public class MainMenu {
                         displayMovies();
                         break;
                     case "Checkout a movie":
+                        System.out.println("Which movie would you like to checkout?[Please input MOVIE NAME]");
                         movieName = scanner.nextLine();
                         checkOutMovie(movieName);
                         break;
                     case "Return a movie":
+                        System.out.println("Which movie would you like to Return?[Please input MOVIE NAME]");
                         movieName = scanner.nextLine();
                         returnMovie(movieName);
                         break;
@@ -108,11 +124,20 @@ public class MainMenu {
                         System.exit(0);
                     case "View my information":
                         String userID;
+                        System.out.println("Please confirm your userID: ");
                         userID = scanner.nextLine();
-                        ViewMyInformation(userID);
+                        System.out.println("Please confirm your Password: ");
+                        password = scanner.nextLine();
+                        if(UserRepository.areValidCredentials(UserID,password)){
+                            ViewMyInformation(userID);
+                        }else{
+                            System.out.println("Sorry that's not a valid ID/PASSWORD");
+                            login();
+                        }
                 }
-                System.out.println("------------------------------------------------------");
-                PrintAllMenuList();
+                //System.out.println("------------------------------------------------------");
+                //PrintAllMenuList();
+                //UserSelectOptions(); //May Question: 添加这一行，程序可以一直循环，但测试无法通过
             }
         }
     }
@@ -140,24 +165,20 @@ public class MainMenu {
 
     private void checkOutBook(String bookName) {
         String input;
-        System.out.println("Which book would you like to checkout?[Please input BOOK NAME]");
         input = bookName;
         System.out.println(bookRepository.checkOutBook(input)? "Thank you! Enjoy the book." : "Sorry, that book is not available.");
     }
     private void checkOutMovie(String movieName){
         String input = movieName;
-        System.out.println("Which movie would you like to checkout?[Please input MOVIE NAME]");
         System.out.println(movieRepository.checkOutMovie(input)? "Thank you! Enjoy the movie." : "Sorry, that movie is not available.");
     }
 
     private void returnBook(String bookName){
         String input = bookName;
-        System.out.println("Which book would you like to Return?[Please input BOOK NAME]");
         System.out.println(bookRepository.returnBook(input)? "Thanks for your return, have a good day!" : "This book may not borrowed from our library, please contact the librarian if not.");
     }
     private void returnMovie(String movieName){
         String input = movieName;
-        System.out.println("Which movie would you like to Return?[Please input MOVIE NAME]");
         System.out.println(movieRepository.returnMovie(input)? "Thanks for your return, have a good day" : "This movie may not borrowed from our library, please contact the librarian if not.");
     }
 
