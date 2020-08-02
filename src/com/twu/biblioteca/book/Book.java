@@ -44,10 +44,5 @@ public class Book {
     public String getIsbn() {
         return isbn;
     }
-/*
-    public boolean isCheckout() {
-        return isCheckout;
-    }
 
- */
 }
