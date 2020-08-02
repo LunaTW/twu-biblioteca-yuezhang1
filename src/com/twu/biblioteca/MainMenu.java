@@ -6,14 +6,10 @@ import com.twu.biblioteca.movie.Movie;
 import com.twu.biblioteca.movie.MovieRepository;
 import com.twu.biblioteca.user.User;
 import com.twu.biblioteca.user.UserRepository;
-import com.twu.biblioteca.user.UserStatus;
 
 import java.util.List;
 import java.util.Scanner;
 import java.util.stream.IntStream;
-
-import static java.awt.SystemColor.menu;
-
 
 public class MainMenu {
     private List<String> options;
@@ -43,16 +39,11 @@ public class MainMenu {
             System.out.println("UserID : "+ UserID+"\n"+
                     "Successful login\n------------------------------------------------------");
             PrintAllMenuList();
-
-            //UserSelectOptions(UserSelectedOption);
-            //System.out.println(scanner.nextLine());
-            //UserSelectOptions();
         }else{
             System.out.println("Sorry that's not a valid ID/PASSWORD");
             login();
         }
     }
-
 
     public void PrintAllMenuList(){
         System.out.println("What would you like to do?");
@@ -77,7 +68,6 @@ public class MainMenu {
         return true;
     }
 
-    //如何使用scanner https://www.runoob.com/java/java-scanner-class.html
     public void UserSelectOptions(){
         Scanner scanner = new Scanner(System.in);
         UserSelectedOption = scanner.nextLine();
@@ -99,6 +89,9 @@ public class MainMenu {
                         bookName = scanner.nextLine();
                         returnBook(bookName);
                         break;
+                    case "View books checked out":
+                        displayCheckOutBook();
+                        break;
                     case "View a list of movies":
                         displayMovies();
                         break;
@@ -113,9 +106,6 @@ public class MainMenu {
                     case "Quit":
                         System.out.println("Goodbye!");
                         System.exit(0);
-                    case "View books checked out":
-                        displayCheckOutBook();
-                        break;
                     case "View my information":
                         String userID;
                         userID = scanner.nextLine();
@@ -127,14 +117,6 @@ public class MainMenu {
         }
     }
 
-    private void ViewMyInformation(String userID) {
-        System.out.printf("%-13s%-2s%-15s%-2s%-19s%-2s%-16s%n","** UserID **","|","** UserName **","|", "** PassWord **","|", "** Email **");
-        //String USER = userRepository.availableUserInformations.stream().filter(user -> User.getUserID().equals(userID));
-        User USER = UserRepository.getUser(userID);
-        System.out.printf("%-13s%-2s%-15s%-2s%-19s%-2s%-16s%n", USER.getUserID(),"|",USER.getUserName(), "|",
-                USER.getPassword(), "|", USER.getEmail());
-
-    }
     private void displayBooks(){
         System.out.printf("%-11s%-2s%-30s%-2s%-30s%-2s%-15s%-2s%-6s%n","** Index **","|","** Title **","|", "** Author **","|", "** ISBN **", "|","** Year **");
         for (Book book: bookRepository.getAvailableBooks()){
@@ -142,7 +124,6 @@ public class MainMenu {
                     book.getAuthor(), "|", book.getIsbn(), "|", book.getYear());
         }
     }
-
     private void displayCheckOutBook(){
         System.out.printf("%-11s%-2s%-30s%-2s%-30s%-2s%-15s%-2s%-6s%n","** Index **","|","** Title **","|", "** Author **","|", "** ISBN **", "|","** Year **");
         for (Book book: bookRepository.getCheckedOutBooks()){
@@ -150,7 +131,6 @@ public class MainMenu {
                     book.getAuthor(), "|", book.getIsbn(), "|", book.getYear());
         }
     }
-
     public void displayMovies(){
         System.out.printf("%-30s%-2s%-30s%-2s%-6s%n","** Title **","|", "** Director **","|","** Year **");
         for(Movie movie:movieRepository.getAvailableMovies()){
@@ -164,25 +144,29 @@ public class MainMenu {
         input = bookName;
         System.out.println(bookRepository.checkOutBook(input)? "Thank you! Enjoy the book." : "Sorry, that book is not available.");
     }
-
-    private void returnBook(String bookName){
-        String input = bookName;
-        System.out.println("Which book would you like to Return?[Please input BOOK NAME]");
-        System.out.println(bookRepository.returnBook(input)? "Thanks for your return, have a good day!" : "This book may not borrowed from our library, please contact the librarian if not.");
-    }
-
     private void checkOutMovie(String movieName){
         String input = movieName;
         System.out.println("Which movie would you like to checkout?[Please input MOVIE NAME]");
         System.out.println(movieRepository.checkOutMovie(input)? "Thank you! Enjoy the movie." : "Sorry, that movie is not available.");
     }
 
+    private void returnBook(String bookName){
+        String input = bookName;
+        System.out.println("Which book would you like to Return?[Please input BOOK NAME]");
+        System.out.println(bookRepository.returnBook(input)? "Thanks for your return, have a good day!" : "This book may not borrowed from our library, please contact the librarian if not.");
+    }
     private void returnMovie(String movieName){
         String input = movieName;
         System.out.println("Which movie would you like to Return?[Please input MOVIE NAME]");
         System.out.println(movieRepository.returnMovie(input)? "Thanks for your return, have a good day" : "This movie may not borrowed from our library, please contact the librarian if not.");
     }
 
+    private void ViewMyInformation(String userID) {
+        System.out.printf("%-13s%-2s%-15s%-2s%-19s%-2s%-16s%n","** UserID **","|","** UserName **","|", "** PassWord **","|", "** Email **");
+        User USER = UserRepository.getUser(userID);
+        System.out.printf("%-13s%-2s%-15s%-2s%-19s%-2s%-16s%n", USER.getUserID(),"|",USER.getUserName(), "|",
+                USER.getPassword(), "|", USER.getEmail());
+    }
 }
 
 

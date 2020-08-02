@@ -39,7 +39,6 @@ public class BookRepository {
         if ( BookWouldLikeToCheckOut != null){
             availableBooks.remove(BookWouldLikeToCheckOut);
             checkedOutBooks.add(BookWouldLikeToCheckOut);
-            //BookWouldLikeToCheckOut.isCheckout = true;
             return true;
         } else {
             return false;

@@ -15,7 +15,6 @@ public class UserRepository {
             new User("5102636","Luna","moneymoneymoney","unswluna@gmail.com"),
             new User("5123456","ZHANGYUE","ILOVEMONEY","money@gmail.com")
     ));
-    private UserStatus userStatus = new UserStatus();
 
     public UserRepository(List<User> availableUserInformations) {
         this.availableUserInformations = availableUserInformations;

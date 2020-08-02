@@ -1,16 +1,11 @@
 package com.twu.biblioteca;
 
-import com.twu.biblioteca.book.Book;
 import com.twu.biblioteca.book.BookRepository;
 import com.twu.biblioteca.movie.MovieRepository;
-import com.twu.biblioteca.user.User;
 import com.twu.biblioteca.user.UserRepository;
 import org.junit.Before;
 import org.junit.Ignore;
-import org.junit.Rule;
 import org.junit.Test;
-import java.lang.Object;
-import org.junit.rules.TestRule;
 //import org.junit.contrib.java.lang.system.ExpectedSystemExit;
 //https://stefanbirkner.github.io/system-rules/apidocs/org/junit/contrib/java/lang/system/SystemOutRule.html
 
@@ -18,7 +13,6 @@ import org.junit.rules.TestRule;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.time.Year;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -50,7 +44,7 @@ public class MainMenuTest {
     BookRepository bookRepository = new BookRepository(BookRepository.availableBooks);
     MovieRepository movieRepository = new MovieRepository(MovieRepository.availableMovies);
     UserRepository userRepository = new UserRepository(UserRepository.availableUserInformations);
-    UserRepository mockUserRepository;
+
     @Before
     public void setUp() throws Exception{
         MainMenuOutput = new ByteArrayOutputStream();
@@ -138,35 +132,11 @@ public class MainMenuTest {
                                 "What would you like to do?\n" +
                                 "Enter 1 : " + option1 +"\n" , MainMenuOutput.toString());
     }
-    @Ignore
-    @Test //Question: 这个测试单独跑没有问题，但一起跑的时候，会收到下面借还书的影响，这个应该如何解决
-    public void ViewBooksCheckedOut(){
-        options = new ArrayList<>(Arrays.asList(option1,option2,option3,option4,option5,option6,option7,option8,option10));
-        mainMenu = new MainMenu(options,bookRepository,movieRepository,userRepository);
-        System.setIn(new ByteArrayInputStream("8".getBytes()));
-        mainMenu.UserSelectOptions();
-        assertEquals("** Index **| ** Title **                   | ** Author **                  | ** ISBN **     | ** Year **\n" +
-                        "04         | Happy Coding                  | Luna                          | 2468           | 2020  \n" +
-                        "05         | Happy Reading                 | Luna                          | 13579          | 2020  \n" +
-                        "------------------------------------------------------\n"+
-                        "What would you like to do?\n" +
-                        "Enter 1 : View a list of books\n" +
-                        "Enter 2 : Checkout a book\n" +
-                        "Enter 3 : Return a book\n" +
-                        "Enter 4 : View a list of movies\n" +
-                        "Enter 5 : Checkout a movie\n" +
-                        "Enter 6 : Return a movie\n" +
-                        "Enter 7 : Login\n" +
-                        "Enter 8 : View books checked out\n"+
-                        "Enter 9 : Quit\n"
-                , MainMenuOutput.toString());
-    }
+
     //*********************************** (1.7) Checkout a book *********************************** //
     /*  1. 正确借书（可借书单里有这本书）=> 可借书单里没有了这本书 & 已借出书单里有了这本书
         2. 错误借书 可借书单里无此书 => 此书暂时不可借
      */
-
-
     @Test
     public void CheckoutABook_Successfully(){
         options = new ArrayList<>(Arrays.asList(option1,option2));
@@ -174,8 +144,6 @@ public class MainMenuTest {
         assertNotEquals(BookRepository.availableBooks.stream().filter(book -> book.getTitle().equals("The little prince")).findFirst().orElse(null),null);
         System.setIn(new ByteArrayInputStream("2\nThe little prince".getBytes()));
         mainMenu.UserSelectOptions();
-        //mainMenu.login();
-        //MainMenuOutput.toString();
         assertEquals(BookRepository.availableBooks.stream().filter(book -> book.getTitle().equals("The little prince")).findFirst().orElse(null),null);
         assertNotEquals(BookRepository.availableBooks.stream().filter(book -> book.getTitle().equals("And Then There were none")).findFirst().orElse(null),null);
         assertNotEquals(BookRepository.availableBooks.stream().filter(book -> book.getTitle().equals("Harry Potter")).findFirst().orElse(null),null);
@@ -187,9 +155,7 @@ public class MainMenuTest {
         options = new ArrayList<>(Arrays.asList(option1,option2));
         mainMenu = new MainMenu(options,bookRepository,movieRepository,userRepository);
         System.setIn(new ByteArrayInputStream("2\nThis is an INVALID BookName".getBytes()));
-        //mainMenu.UserSelectOptions("2\nThis is an INVALID BookName");
         mainMenu.UserSelectOptions();
-        //MainMenuOutput.toString();
         assertThat(MainMenuOutput.toString(),containsString("Sorry, that book is not available."));
     }
 
@@ -222,7 +188,7 @@ public class MainMenuTest {
 
     //*********************************** (1.6) Quit the application *********************************** //
     @Ignore
-    @Test //Question import exit出现问题，在contrib标红色【line14】
+    @Test //Question import exit出现问题，在contrib标红色【line14,line40 - line42】
     public void QuitTheApplication(){
         options = new ArrayList<>(Arrays.asList(option1,option2,option3,option10));
         mainMenu = new MainMenu(options,bookRepository,movieRepository,userRepository);
@@ -272,6 +238,7 @@ public class MainMenuTest {
         mainMenu.UserSelectOptions();
         assertThat(MainMenuOutput.toString(),containsString("Sorry, that movie is not available."));
     }
+
     //******************* (2.2) - extend -- Return a movie *********************************** //
     @Test
     public void ReturnMovie_Successfully(){
@@ -316,8 +283,31 @@ public class MainMenuTest {
     }
 
 
-    //   @Test   Login_Unsuccessfully
+    //   @Test   Login_Unsuccessfully  Question: 这个此时尝试写，因为无法用exit，所以程序会进入死循环。
 
+    @Ignore
+    @Test //Question: 这个测试单独跑没有问题，但一起跑的时候，会收到下面借还书的影响，这个应该如何解决
+    public void ViewBooksCheckedOut(){
+        options = new ArrayList<>(Arrays.asList(option1,option2,option3,option4,option5,option6,option7,option8,option10));
+        mainMenu = new MainMenu(options,bookRepository,movieRepository,userRepository);
+        System.setIn(new ByteArrayInputStream("8".getBytes()));
+        mainMenu.UserSelectOptions();
+        assertEquals("** Index **| ** Title **                   | ** Author **                  | ** ISBN **     | ** Year **\n" +
+                        "04         | Happy Coding                  | Luna                          | 2468           | 2020  \n" +
+                        "05         | Happy Reading                 | Luna                          | 13579          | 2020  \n" +
+                        "------------------------------------------------------\n"+
+                        "What would you like to do?\n" +
+                        "Enter 1 : View a list of books\n" +
+                        "Enter 2 : Checkout a book\n" +
+                        "Enter 3 : Return a book\n" +
+                        "Enter 4 : View a list of movies\n" +
+                        "Enter 5 : Checkout a movie\n" +
+                        "Enter 6 : Return a movie\n" +
+                        "Enter 7 : Login\n" +
+                        "Enter 8 : View books checked out\n"+
+                        "Enter 9 : Quit\n"
+                , MainMenuOutput.toString());
+    }
 
     @Test
     public void ViewMyInformation(){

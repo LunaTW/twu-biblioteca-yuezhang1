@@ -1,7 +1,5 @@
 package com.twu.biblioteca.movie;
 
-import com.twu.biblioteca.book.Book;
-
 import java.time.Year;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -47,7 +45,6 @@ public class MovieRepository {
             return false;
         }
     }
-
 
     public boolean returnMovie(String title) {
         Movie MovieWouldLikeToReturn = checkedOutMovies.stream().filter(movie -> movie.getTitle().equals(title))

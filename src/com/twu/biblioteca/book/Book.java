@@ -8,7 +8,6 @@ public class Book {
     private String isbn;
     private String title;
     private Year year;
-    //protected boolean isCheckout;
 
     public Book(String index, String title, String author, String isbn, Year year) {
         this.index=index;
