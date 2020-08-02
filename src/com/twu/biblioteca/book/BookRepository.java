@@ -19,7 +19,7 @@ public class BookRepository {
             new Book("05","Happy Reading","Luna","13579", Year.of(2020))
     ));
 
-    public List<Book> getAvailableBooks() {
+    public static List<Book> getAvailableBooks() {
         return availableBooks;
     }
     public List<Book> getCheckedOutBooks() {
@@ -33,7 +33,7 @@ public class BookRepository {
         availableBooks.add(book);
     }
 
-    public boolean checkOutBook(String title){
+    public static boolean checkOutBook(String title){
         Book BookWouldLikeToCheckOut = availableBooks.stream().filter(book -> book.getTitle().equals(title))
                 .findFirst().orElse(null);
         if ( BookWouldLikeToCheckOut != null){
@@ -45,7 +45,7 @@ public class BookRepository {
         }
     }
 
-    public boolean returnBook(String title){
+    public static boolean returnBook(String title){
         Book BookWouldLikeToReturn = checkedOutBooks.stream().filter(book -> book.getTitle().equals(title))
                 .findFirst().orElse(null);
         if ( BookWouldLikeToReturn != null){

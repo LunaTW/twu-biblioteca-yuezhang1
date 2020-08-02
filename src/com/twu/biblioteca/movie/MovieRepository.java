@@ -23,7 +23,7 @@ public class MovieRepository {
     public MovieRepository(List<Movie> availableMovies) {
     }
 
-    public List<Movie> getAvailableMovies() {
+    public static List<Movie> getAvailableMovies() {
         return availableMovies;
     }
 
@@ -34,7 +34,7 @@ public class MovieRepository {
         availableMovies.add(movie);
     }
 
-    public boolean checkOutMovie(String title){
+    public static boolean checkOutMovie(String title){
         Movie MovieWouldLikeToCheckOut = availableMovies.stream().filter(movie -> movie.getTitle().equals(title))
                 .findFirst().orElse(null);
         if(MovieWouldLikeToCheckOut != null){
@@ -46,7 +46,7 @@ public class MovieRepository {
         }
     }
 
-    public boolean returnMovie(String title) {
+    public static boolean returnMovie(String title) {
         Movie MovieWouldLikeToReturn = checkedOutMovies.stream().filter(movie -> movie.getTitle().equals(title))
                 .findFirst().orElse(null);
         if(MovieWouldLikeToReturn != null){

@@ -20,14 +20,6 @@ public class UserRepository {
         this.availableUserInformations = availableUserInformations;
     }
 
-    public void addNewUser(User user){
-        availableUserInformations.add(user);
-    }
-
-    public List<User> getUsers(){
-        return availableUserInformations;
-    }
-
     public static User getUser(String UserID) {
         return availableUserInformations.stream().filter(user -> user.getUserID().equals(UserID)).findFirst().orElse(null);
     }

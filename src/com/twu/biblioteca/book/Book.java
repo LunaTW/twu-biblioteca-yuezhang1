@@ -11,17 +11,9 @@ public class Book {
 
     public Book(String index, String title, String author, String isbn, Year year) {
         this.index=index;
-        this.setTitle(title);
+        this.title=title;
         this.author = author;
         this.isbn = isbn;
-        this.setYear(year);
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public void setYear(Year year) {
         this.year = year;
     }
 
